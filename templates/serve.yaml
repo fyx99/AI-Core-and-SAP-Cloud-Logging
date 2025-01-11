@@ -1,0 +1,57 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+metadata:
+  name: cloudloggingsample
+  annotations:
+    scenarios.ai.sap.com/description: "cloudloggingsample"
+    scenarios.ai.sap.com/name: "cloudloggingsample"
+    executables.ai.sap.com/description: "cloudloggingsample"
+    executables.ai.sap.com/name: "cloudloggingsample"
+  labels:
+    scenarios.ai.sap.com/id: "cloudloggingsample"
+    ai.sap.com/version: "1.0"
+spec:
+  inputs:
+    parameters: 
+      - name: envexample
+        default: value
+        type: string
+        description: description of the cloud logging 
+  template:
+    apiVersion: "serving.kserve.io/v1beta1"
+    metadata:
+      annotations: |
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: 1
+        autoscaling.knative.dev/targetBurstCapacity: 0
+      labels: |
+        ai.sap.com/resourcePlan: starter
+    spec: |
+      predictor:
+        imagePullSecrets:
+          - name: felixdockersecrect
+        minReplicas: 1
+        maxReplicas: 5
+        containers:
+        - name: kserve-container
+          image: docker.io/bfwork/cloudloggingsample
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env: 
+            - name: CLOUD_LOGGING_INGEST_MTLS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-logging-secret
+                  key: CLOUD_LOGGING_INGEST_MTLS_ENDPOINT
+            - name: CLOUD_LOGGING_INGEST_MTLS_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-logging-secret
+                  key: CLOUD_LOGGING_INGEST_MTLS_CERT
+            - name: CLOUD_LOGGING_INGEST_MTLS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-logging-secret
+                  key: CLOUD_LOGGING_INGEST_MTLS_KEY

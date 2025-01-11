@@ -1,0 +1,8 @@
+
+docker build -t bfwork/cloudloggingsample -f Dockerfile . ;
+
+
+docker push bfwork/cloudloggingsample 
+
+
+docker run --user nobody -it bfwork/cloudloggingsample 
