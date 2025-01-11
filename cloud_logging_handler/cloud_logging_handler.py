@@ -14,7 +14,7 @@ class CloudLoggingHandler(logging.Handler):
         super().__init__()
         self.endpoint = mtls_endpoint_from_env()
         self.client_cert = mtls_client_cert_from_env()
-        self.executor = executor  # Configure the number of worker threads
+        self.executor = executor
 
     def emit(self, record):
         try:
@@ -36,17 +36,17 @@ class CloudLoggingHandler(logging.Handler):
 
     def _send_log(self, payload):
         try:
-            # Convert payload to gzipped JSON
-            json_bytes = json.dumps(payload).encode('utf-8')
-            gzipped_data = gzip.compress(json_bytes)
+            json_bytes = json.dumps(payload).encode('utf-8')    
+            gzipped_data = gzip.compress(json_bytes)    # Convert payload to gzipped JSON
             
-            # Send the log to the cloud service
+            # Send the log to the ingest-mtls endpoint
             response = requests.put(
                 self.endpoint,
                 data=gzipped_data,
                 headers={'Content-Encoding': 'gzip'},
-                cert=self.client_cert
+                cert=self.client_cert   # hand in client certificate paths
             )
             response.raise_for_status()
         except Exception as e:
             logging.error(e)
+

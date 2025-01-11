@@ -23,5 +23,3 @@ def mtls_client_cert_from_env():
 def mtls_endpoint_from_env():
     """return endpoint from env variable"""
     return "https://" + os.environ["CLOUD_LOGGING_INGEST_MTLS_ENDPOINT"]
-
-    

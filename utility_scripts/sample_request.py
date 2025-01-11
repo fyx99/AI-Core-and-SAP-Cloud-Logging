@@ -2,6 +2,12 @@ from ai_api_client_sdk.ai_api_v2_client import AIAPIV2Client
 import requests
 
 
+AICORE_AUTH_URL =  "https://<auth_tenant>.authentication.sap.hana.ondemand.com"
+AICORE_CLIENT_ID = "<client_id>"
+AICORE_CLIENT_SECRET = "<client_secret>"
+AICORE_RESOURCE_GROUP = "<resource_group>"
+AICORE_BASE_URL = "https://api.ai.<region>.ml.hana.ondemand.com/v2"
+
 ai_api_v2_client = AIAPIV2Client(
     base_url=AICORE_BASE_URL + "/lm", 
     auth_url=AICORE_AUTH_URL + "/oauth/token", 
@@ -14,7 +20,7 @@ ai_api_v2_client = AIAPIV2Client(
 
 def get_response():
     res = requests.post(
-        f"https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/dd57ca34bd22438c/v2/hello/",
+        f"https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/dfe12a3f001337b6/v2/predict/",
         json={},
         headers={
             "Authorization": ai_api_v2_client.rest_client.get_token(),
@@ -23,6 +29,7 @@ def get_response():
         })
     if res.status_code != 200:
         raise Exception("ERROR WITH DEPLOYMENT " + str(res.status_code) + " " + str(res.content))
+    print(res.json())
     return res.json()
 
 

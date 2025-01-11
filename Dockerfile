@@ -2,7 +2,6 @@
 # You may find more base layers at https://hub.docker.com/
 FROM python:3.7 as base
 
-
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
