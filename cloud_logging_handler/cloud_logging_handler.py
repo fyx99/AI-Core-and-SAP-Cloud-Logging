@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 import gzip
+import os
 import json
 import logging
 import requests
@@ -24,12 +25,14 @@ class CloudLoggingHandler(logging.Handler):
                 "date": record.created,
                 "filename": record.filename,
                 "level": record.levelname,
-                "thread": record.threadName
+                "thread": record.threadName,
+                "deployment_id": os.environ.get("HOSTNAME", "")[:16],  # a env variable set by ai core gives us some info on the deployment_id
+                "deployment_name": os.environ.get("DEPLOYMENT_NAME", "")  # a env variable set us to give the workload a name
             }
             # Submit the background task to the ThreadPoolExecutor
             self.executor.submit(self._send_log, payload)
         except Exception as e:
-            print(f"Failed to schedule log sending: {e}")
+            logging.error(e)
 
     def _send_log(self, payload):
         try:
@@ -44,9 +47,6 @@ class CloudLoggingHandler(logging.Handler):
                 headers={'Content-Encoding': 'gzip'},
                 cert=self.client_cert
             )
-            print(response)
-            print(response.content)
-            print(response.status_code)
-            #response.raise_for_status()
+            response.raise_for_status()
         except Exception as e:
-            print(e)
+            logging.error(e)

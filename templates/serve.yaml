@@ -11,12 +11,6 @@ metadata:
     scenarios.ai.sap.com/id: "cloudloggingsample"
     ai.sap.com/version: "1.0"
 spec:
-  inputs:
-    parameters: 
-      - name: envexample
-        default: value
-        type: string
-        description: description of the cloud logging 
   template:
     apiVersion: "serving.kserve.io/v1beta1"
     metadata:
@@ -55,3 +49,5 @@ spec:
                 secretKeyRef:
                   name: cloud-logging-secret
                   key: CLOUD_LOGGING_INGEST_MTLS_KEY
+            - name: DEPLOYMENT_NAME
+              value: "CLOUD_LOGGING_SAMPLE"
